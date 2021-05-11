@@ -3,7 +3,8 @@ import requests
 from lxml import html
 
 try:
-    os.mkdir(input('Folder name: '))
+    folder_name = input('Folder name: ')
+    os.mkdir(folder_name)
 except FileExistsError:
     print('Folder already exists.')
 
@@ -20,5 +21,8 @@ for i in range(int(chapters)):
     r = requests.get(base_url + str(i + 1))
     response = html.fromstring(r.text)
     images = response.xpath('//img')
-    for img in images:
-        print (img.attrib['src'])
+    for index, img in enumerate(images, start = 1):
+        with open('./' + folder_name + '/' + str(i +1) + '_' + str(index) + '.png', 'wb') as file:
+            download = requests.get(img.attrib['src'])
+            file.write(download.content)
+    print('Chapter ' + str(i + 1) + ' finished!')
